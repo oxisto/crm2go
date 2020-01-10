@@ -60,6 +60,7 @@ func InitPostgreSQL(host string) {
 	mapper = &gorp.DbMap{Db: pdb, Dialect: gorp.SqliteDialect{}}
 	mapper.TypeConverter = typeConverter{}
 	mapper.AddTableWithName(crm.Contact{}, "contact").SetKeys(true, "ID")
+	mapper.AddTableWithName(crm.Note{}, "note").SetKeys(true, "ID")
 	mapper.CreateTablesIfNotExists()
 
 	log.Infof("Using PostgreSQL @ %s", host)

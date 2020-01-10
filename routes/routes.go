@@ -35,20 +35,27 @@ func NewRouter() *gin.Engine {
 	r := gin.Default()
 
 	api := r.Group("/api")
-	/*api.Use(handler.AuthRequired)
-	{*/
-	contacts := api.Group("/contacts")
-	/*persons.Use(AccountRequired)
-	{*/
-	contacts.GET("/", GetAllContacts)
-	contacts.GET("/:id", GetContact)
+	/*api.Use(handler.AuthRequired)*/
+	{
+		contacts := api.Group("/contacts")
+		/*persons.Use(AccountRequired)*/
+		{
+			contacts.GET("/", GetAllContacts)
+			contacts.GET("/:id", GetContact)
 
-	// @todo Replace the post requests with a message queue
+			// @todo Replace the post requests with a message queue
 
-	contacts.POST("/", PostContact)
-	contacts.PUT("/:id", PutContact)
-	//}
-	//}
+			contacts.POST("/", PostContact)
+			contacts.PUT("/:id", PutContact)
+
+			notes := contacts.Group("/:id/notes")
+			{
+				notes.GET("/", GetAllNotes)
+
+				notes.POST("/", PostNote)
+			}
+		}
+	}
 
 	return r
 }

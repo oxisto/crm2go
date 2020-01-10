@@ -90,3 +90,44 @@ func PutContact(c *gin.Context) {
 
 	JSON(c, http.StatusOK, contact, err)
 }
+
+func GetAllNotes(c *gin.Context) {
+	var (
+		id    int64
+		err   error
+		notes []crm.Note
+	)
+
+	if id, err = IntParam(c, "id"); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
+		return
+	}
+
+	if notes, err = db.GetAllNotes(id); err != nil {
+		c.JSON(http.StatusNotFound, ErrorResponse{err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, notes)
+}
+
+func PostNote(c *gin.Context) {
+	var (
+		err  error
+		note crm.Note
+	)
+
+	if err = c.BindJSON(&note); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
+		return
+	}
+
+	if err = db.Insert(&note); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
+		return
+	}
+
+	log.Printf("Inserted note %d", note.ID)
+
+	JSON(c, http.StatusOK, note, err)
+}
