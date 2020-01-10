@@ -12,6 +12,9 @@ export class HttpService extends Vue {
   async post(url: string, data: any = null) {
     return this.fetch("POST", url, data);
   }
+  async put(url: string, data: any = null) {
+    return this.fetch("PUT", url, data);
+  }
 
   async fetch(method: string, url: string, data: any = null) {
     let headers = new Headers({ "Content-Type": "application/json" });

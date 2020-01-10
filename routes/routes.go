@@ -45,7 +45,8 @@ func NewRouter() *gin.Engine {
 
 	// @todo Replace the post requests with a message queue
 
-	contacts.POST("/:id", PostContact)
+	contacts.POST("/", PostContact)
+	contacts.PUT("/:id", PutContact)
 	//}
 	//}
 

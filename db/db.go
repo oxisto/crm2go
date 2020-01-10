@@ -5,9 +5,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"fmt"
+	//"fmt"
 
 	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
+
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gorp.v2"
 )
@@ -53,10 +55,25 @@ func init() {
 }
 
 func InitPostgreSQL(host string) {
-	pdb, _ = sql.Open("postgres", fmt.Sprintf("postgres://postgres@%s/postgres?sslmode=disable", host))
-	mapper = &gorp.DbMap{Db: pdb, Dialect: gorp.PostgresDialect{}}
+	//pdb, _ = sql.Open("postgres", fmt.Sprintf("postgres://postgres@%s/crm?sslmode=disable", host))
+	pdb, _ := sql.Open("sqlite3", "./db.sqlite")
+	mapper = &gorp.DbMap{Db: pdb, Dialect: gorp.SqliteDialect{}}
 	mapper.TypeConverter = typeConverter{}
 	mapper.AddTableWithName(crm.Contact{}, "contact").SetKeys(true, "ID")
+	mapper.CreateTablesIfNotExists()
 
 	log.Infof("Using PostgreSQL @ %s", host)
+}
+
+// Insert inserts a suitable struct into our database. Only types that are registered are suitable.
+func Insert(object interface{}) (err error) {
+	log.Debugf("Inserting %+v", object)
+
+	return mapper.Insert(object)
+}
+
+func Update(object interface{}) (int64, error) {
+	rows, err := mapper.Update(object)
+
+	return rows, err
 }
